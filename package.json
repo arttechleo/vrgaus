@@ -22,6 +22,7 @@
         "demo": "node util/server.js -d ./build/demo -p 8081",
         "demo-https": "node util/https-server-fixed.js -d ./build/demo -p 8443",
         "start": "node server.js",
+        "render-build": "npm ci && npm run build",
         "fix-styling": "npx stylelint **/*.scss --fix",
         "fix-js": "npx eslint src --fix",
         "lint": "npx eslint 'src/**/*.js' || true",

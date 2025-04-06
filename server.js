@@ -1,44 +1,47 @@
-// Express server for Render.com deployment
+// Simple Express server for Render.com
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
+// Get the directory path
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Initialize Express
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to handle CORS and security headers
+// Create public directory if it doesn't exist
+const publicDir = path.join(__dirname, 'public');
+try {
+  if (!fs.existsSync(publicDir)) {
+    fs.mkdirSync(publicDir, { recursive: true });
+  }
+} catch (err) {
+  console.error('Error creating public directory:', err);
+}
+
+// Set security headers
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
   next();
 });
 
-// Serve static files from the build/demo directory
+// Serve build/demo directory statically
 app.use(express.static(path.join(__dirname, 'build/demo')));
 
-// Handle all routes - important for SPA behavior
-app.get('*', (req, res) => {
-  // Check if the file exists in the build/demo directory
-  const filePath = path.join(__dirname, 'build/demo', req.path);
-  const indexPath = path.join(__dirname, 'build/demo/index.html');
-  
-  // Try to serve the specific file first, fall back to index.html
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      // If file not found, serve index.html
-      res.sendFile(indexPath);
-    }
-  });
+// Log requests for debugging
+app.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.path}`);
+  next();
 });
 
-// Start the server
+// Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  console.log(`WebXR pages available at:`);
-  console.log(`- /vr-quest.html (Quest optimized)`);
-  console.log(`- /vr.html (Standard VR)`);
-  console.log(`- /test.html (WebXR test page)`);
+  console.log(`Access your app at: http://localhost:${port}`);
+  console.log(`VR demo available at: http://localhost:${port}/vr.html`);
+  console.log(`Quest optimized VR demo at: http://localhost:${port}/vr-quest.html`);
 }); 
