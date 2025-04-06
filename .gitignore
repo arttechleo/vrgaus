@@ -1,0 +1,11 @@
+dist
+build
+node_modules/
+.DS_Store
+.env
+.idea/
+.vscode/
+*.log
+npm-debug.log*
+ssl/
+**/*.DS_Store
