@@ -19,12 +19,26 @@ app.use((req, res, next) => {
 // Serve static files from the build/demo directory
 app.use(express.static(path.join(__dirname, 'build/demo')));
 
-// Route all requests to index.html
+// Handle all routes - important for SPA behavior
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build/demo/index.html'));
+  // Check if the file exists in the build/demo directory
+  const filePath = path.join(__dirname, 'build/demo', req.path);
+  const indexPath = path.join(__dirname, 'build/demo/index.html');
+  
+  // Try to serve the specific file first, fall back to index.html
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      // If file not found, serve index.html
+      res.sendFile(indexPath);
+    }
+  });
 });
 
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`WebXR pages available at:`);
+  console.log(`- /vr-quest.html (Quest optimized)`);
+  console.log(`- /vr.html (Standard VR)`);
+  console.log(`- /test.html (WebXR test page)`);
 }); 
