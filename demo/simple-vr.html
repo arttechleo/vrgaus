@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VRGaus - Simple Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 15px 30px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>VRGaus Simple Test</h1>
+  <p>This page confirms your server is working correctly.</p>
+  
+  <div id="status"></div>
+  
+  <script>
+    // Display base info
+    const status = document.getElementById('status');
+    status.innerHTML = `
+      <p><strong>URL:</strong> ${window.location.href}</p>
+      <p><strong>Protocol:</strong> ${window.location.protocol}</p>
+      <p><strong>Host:</strong> ${window.location.host}</p>
+      <p><strong>Secure Context:</strong> ${window.isSecureContext ? 'Yes' : 'No'}</p>
+      <p><strong>WebXR Available:</strong> ${navigator.xr ? 'Yes' : 'No'}</p>
+    `;
+    
+    // Create a simple button to test file access
+    const button = document.createElement('button');
+    button.textContent = 'Load Module Test';
+    button.addEventListener('click', async () => {
+      try {
+        // Test if we can fetch the module file
+        const response = await fetch('./lib/gaussian-splats-3d.module.js');
+        if (response.ok) {
+          alert('Module file loaded successfully!');
+        } else {
+          alert('Error loading module file: ' + response.status);
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    });
+    document.body.appendChild(button);
+  </script>
+</body>
+</html> 
