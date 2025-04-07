@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>3D Gaussian Splat Demo - Quest VR</title>
+  <script type="text/javascript" src="js/util.js"></script>
+  <script type="importmap">
+    {
+        "imports": {
+            "three": "./lib/three.module.js",
+            "@mkkellogg/gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+        }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #000000;
+      height: 100vh;
+      margin: 0px;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-family: Arial, sans-serif;
+      pointer-events: none;
+      z-index: 100;
+      display: block;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      text-align: center;
+      transform: translateY(-50%);
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">Loading Gaussian Splats...</div>
+  <div id="info">Oculus Quest VR Optimized Demo</div>
+  
+  <script type="module">
+    import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
+    import * as THREE from 'three';
+    
+    const loadingElement = document.getElementById('loading');
+    const infoElement = document.getElementById('info');
+    
+    // Quest-optimized settings
+    const viewer = new GaussianSplats3D.Viewer({
+      'initialCameraLookAt': [0.20786, -0.68154, -0.27311],
+      'maxScreenSpaceRadius': 40,  // Reduced for Quest performance
+      'gpuAcceleratedSorting': true,
+      'useDebugColors': false,
+      'halfPrecisionPositions': true,  // Better for mobile GPUs
+      'halfPrecisionColors': true,     // Better for mobile GPUs
+      'webXRMode': GaussianSplats3D.WebXRMode.VR,
+      'webXRSessionInit': {
+        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking']
+      },
+      'onPrerender': () => {
+        if (loadingElement.style.display !== 'none') {
+          loadingElement.style.display = 'none';
+        }
+      }
+    });
+    
+    // Show WebXR status
+    infoElement.innerHTML += `<br>WebXR Available: ${navigator.xr ? "Yes" : "No"}`;
+    
+    // Use a lower resolution splat file if available, otherwise use the high-res one
+    let path = 'assets/data/bonsai/bonsai_high.ksplat'; 
+    
+    // Add loading progress indicator
+    viewer.addSplatScene(path, {
+        'rotation': new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), new THREE.Vector3(0, 1, 0)).toArray(),
+        'scale': [0.25, 0.25, 0.25],
+        'position': [0, 0.5, 0],
+        'onProgress': (progress) => {
+          loadingElement.textContent = `Loading Gaussian Splats... ${Math.floor(progress * 100)}%`;
+        }
+    })
+    .then(() => {
+        infoElement.innerHTML += '<br>Scene loaded! Enter VR by clicking the VR button';
+        viewer.start();
+    })
+    .catch(error => {
+      loadingElement.textContent = `Error loading splats: ${error.message}`;
+      console.error(error);
+    });
+  </script>
+</body>
+
+</html> 
