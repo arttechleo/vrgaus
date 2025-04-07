@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>3D Gaussian Splat Demo - Quest VR</title>
-  <script type="text/javascript" src="js/util.js"></script>
+  <script type="text/javascript" src="/js/util.js"></script>
   <script type="importmap">
     {
         "imports": {
-            "three": "./lib/three.module.js",
-            "gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+            "three": "/lib/three.module.js",
+            "gaussian-splats-3d": "/lib/gaussian-splats-3d.module.js"
         }
     }
   </script>
@@ -79,7 +79,7 @@
     infoElement.innerHTML += `<br>WebXR Available: ${navigator.xr ? "Yes" : "No"}`;
     
     // Use a lower resolution splat file if available, otherwise use the high-res one
-    let path = 'assets/data/bonsai/bonsai_high.ksplat'; 
+    let path = '/assets/data/bonsai/bonsai_high.ksplat'; 
     
     // Add loading progress indicator
     viewer.addSplatScene(path, {

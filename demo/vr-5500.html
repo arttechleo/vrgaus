@@ -5,10 +5,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>3D Gaussian Splat Demo - VR Garden</title>
-  <!-- Direct script loading instead of import maps -->
-  <script type="text/javascript" src="/lib/three.module.js"></script>
-  <script type="text/javascript" src="/lib/gaussian-splats-3d.module.js"></script>
+  <title>3D Gaussian Splat Demo - VR Local</title>
+  <!-- Direct script loading with specific paths that work with port 5500 -->
+  <script type="text/javascript" src="../build/demo/lib/three.module.js"></script>
+  <script type="text/javascript" src="../build/demo/lib/gaussian-splats-3d.module.js"></script>
   <style>
     body {
       background-color: #000000;
@@ -48,7 +48,7 @@
 </head>
 
 <body>
-  <div id="info">VR Gaussian Splats Demo</div>
+  <div id="info">VR Gaussian Splats Demo (Local 5500)</div>
   <button id="vr-button" disabled>Enter VR</button>
   
   <script>
@@ -88,8 +88,8 @@
       viewer.enterXR();
     });
     
-    // Load the scene
-    let path = '/assets/data/bonsai/bonsai_high.ksplat';
+    // Load the scene - use a direct path that works with the local server
+    let path = '../build/demo/assets/data/bonsai/bonsai_high.ksplat';
     viewer.addSplatScene(path, {
       'rotation': new THREE.Quaternion().setFromUnitVectors(
         new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), 
@@ -110,4 +110,4 @@
   </script>
 </body>
 
-</html>
+</html> 
