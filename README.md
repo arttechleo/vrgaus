@@ -1,3 +1,7 @@
+NOTE!!! THIS DOES NOT BELONG TO ME!
+I sm trying to run this repository in WebXR. 
+This belongs to  @mkkellogg
+
 # VRGaus - 3D Gaussian Splatting for VR
 
 Three.js-based implementation of a renderer for [3D Gaussian Splatting for Real-Time Radiance Field Rendering](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/), optimized for WebXR and VR applications. Their project is CUDA-based and needs to run natively on your machine, but I wanted to build a viewer that was accessible via the web.
