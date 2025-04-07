@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebXR Test Root</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 800px; 
+      margin: 0 auto; 
+      padding: 20px;
+    }
+    a { 
+      display: block; 
+      margin: 10px 0; 
+      padding: 10px; 
+      background: #f0f0f0; 
+      text-decoration: none;
+      color: #333;
+      border-radius: 4px;
+    }
+    a:hover {
+      background: #e0e0e0;
+    }
+    h1, h2 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>WebXR Tests</h1>
+  <p>Environment Info:</p>
+  <ul id="env-info"></ul>
+  
+  <h2>Test Pages:</h2>
+  <a href="/demo/basic-webxr.html">Basic WebXR Test</a>
+  <a href="/demo/basic-webxr-module.html">Basic WebXR Module Test</a>
+  <a href="/demo/vr.html">Original VR Demo</a>
+  <a href="/demo/vr-quest-direct.html">Quest Optimized VR Demo</a>
+  
+  <script>
+    const infoEl = document.getElementById('env-info');
+    
+    const items = [
+      `URL: ${window.location.href}`,
+      `Protocol: ${window.location.protocol}`,
+      `Host: ${window.location.host}`,
+      `Secure Context: ${window.isSecureContext ? 'Yes' : 'No'}`,
+      `WebXR Available: ${navigator.xr ? 'Yes' : 'No'}`
+    ];
+    
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      infoEl.appendChild(li);
+    });
+    
+    // Check VR support
+    if (navigator.xr) {
+      navigator.xr.isSessionSupported('immersive-vr')
+        .then(supported => {
+          const li = document.createElement('li');
+          li.textContent = `VR Supported: ${supported ? 'Yes' : 'No'}`;
+          infoEl.appendChild(li);
+        })
+        .catch(err => {
+          const li = document.createElement('li');
+          li.textContent = `Error checking VR support: ${err}`;
+          infoEl.appendChild(li);
+        });
+    }
+  </script>
+</body>
+</html> 

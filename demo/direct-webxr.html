@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Direct WebXR Test</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif;
+      margin: 0;
+      overflow: hidden; 
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      box-sizing: border-box;
+      z-index: 100;
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+    }
+    #vr-button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #vr-button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div id="info">Direct WebXR Test</div>
+  <button id="vr-button" disabled>Enter VR</button>
+  
+  <script>
+    // Elements
+    const infoEl = document.getElementById('info');
+    const vrButton = document.getElementById('vr-button');
+    
+    // Show environment info
+    infoEl.innerHTML += `<br>URL: ${window.location.href}`;
+    infoEl.innerHTML += `<br>Protocol: ${window.location.protocol}`;
+    infoEl.innerHTML += `<br>Secure Context: ${window.isSecureContext ? 'Yes' : 'No'}`;
+    infoEl.innerHTML += `<br>WebXR Available: ${navigator.xr ? 'Yes' : 'No'}`;
+    
+    // Check VR support
+    if (navigator.xr) {
+      navigator.xr.isSessionSupported('immersive-vr')
+        .then(supported => {
+          infoEl.innerHTML += `<br>VR Supported: ${supported ? 'Yes' : 'No'}`;
+          vrButton.disabled = !supported;
+        })
+        .catch(err => {
+          infoEl.innerHTML += `<br>Error checking VR support: ${err}`;
+        });
+    }
+    
+    // Set up VR button
+    vrButton.addEventListener('click', onEnterVR);
+    
+    function onEnterVR() {
+      // Request an immersive-vr session
+      navigator.xr.requestSession('immersive-vr', {
+        optionalFeatures: ['local-floor']
+      }).then(onSessionStarted)
+        .catch(error => {
+          infoEl.innerHTML += `<br>Error starting VR session: ${error}`;
+        });
+    }
+    
+    function onSessionStarted(session) {
+      infoEl.innerHTML += '<br>VR session started!';
+      vrButton.textContent = 'Exit VR';
+      vrButton.removeEventListener('click', onEnterVR);
+      
+      // Set up session end handling
+      session.addEventListener('end', () => {
+        infoEl.innerHTML += '<br>VR session ended';
+        vrButton.textContent = 'Enter VR';
+        vrButton.addEventListener('click', onEnterVR);
+      });
+      
+      // Create the WebGL context for XR
+      const canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      const gl = canvas.getContext('webgl', { xrCompatible: true });
+      
+      // Initialize WebXR rendering
+      session.updateRenderState({
+        baseLayer: new XRWebGLLayer(session, gl)
+      });
+      
+      // Create a very simple frame loop to keep the session alive
+      function onXRFrame(time, frame) {
+        session.requestAnimationFrame(onXRFrame);
+        const pose = frame.getViewerPose(xrRefSpace);
+        if (pose) {
+          // Viewer is tracked in VR
+        }
+      }
+      
+      // Get a reference space to use for the session
+      session.requestReferenceSpace('local')
+        .then((refSpace) => {
+          xrRefSpace = refSpace;
+          session.requestAnimationFrame(onXRFrame);
+        });
+    }
+    
+    // Global XR reference space
+    let xrRefSpace = null;
+  </script>
+</body>
+</html> 
