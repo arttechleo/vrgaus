@@ -6,106 +6,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>3D Gaussian Splat Demo - VR Garden</title>
-  <!-- Direct script loading instead of import maps -->
-  <script type="text/javascript" src="/lib/three.module.js"></script>
-  <script type="text/javascript" src="/lib/gaussian-splats-3d.module.js"></script>
+  <script type="text/javascript" src="js/util.js"></script>
+  <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.151.3/build/three.module.js",
+            "@mkkellogg/gaussian-splats-3d": "./lib/gaussian-splats-3d.module.js"
+        }
+    }
+  </script>
   <style>
+
     body {
       background-color: #000000;
       height: 100vh;
       margin: 0px;
-      overflow: hidden;
     }
-    #info {
-      position: absolute;
-      top: 10px;
-      width: 100%;
-      text-align: center;
-      color: white;
-      font-family: Arial, sans-serif;
-      z-index: 100;
-      display: block;
-      pointer-events: none;
-    }
-    #vr-button {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 24px;
-      background: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #vr-button:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
-    }
+
   </style>
+
 </head>
 
 <body>
-  <div id="info">VR Gaussian Splats Demo</div>
-  <button id="vr-button" disabled>Enter VR</button>
-  
-  <script>
-    // Elements
-    const infoEl = document.getElementById('info');
-    const vrButton = document.getElementById('vr-button');
-    
-    // Display environment info
-    infoEl.innerHTML += `<br>URL: ${window.location.href}`;
-    infoEl.innerHTML += `<br>Protocol: ${window.location.protocol}`;
-    infoEl.innerHTML += `<br>Secure Context: ${window.isSecureContext ? 'Yes' : 'No'}`;
-    infoEl.innerHTML += `<br>WebXR Available: ${navigator.xr ? 'Yes' : 'No'}`;
-    
-    // VR support check
-    if (navigator.xr) {
-      navigator.xr.isSessionSupported('immersive-vr').then(supported => {
-        vrButton.disabled = !supported;
-        if (supported) {
-          infoEl.innerHTML += "<br>VR is supported on this device!";
-        } else {
-          infoEl.innerHTML += "<br>VR is NOT supported on this device.";
-        }
-      });
-    }
-    
-    // Create viewer
+  <script type="module">
+    import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
+    import * as THREE from 'three';
     const viewer = new GaussianSplats3D.Viewer({
       'initialCameraLookAt': [0.20786, -0.68154, -0.27311],
       'webXRMode': GaussianSplats3D.WebXRMode.VR,
       'webXRSessionInit': {
-        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking']
-      }
+        'requiredFeatures': ['local-floor', 'bounded-floor', 'hand-tracking'],
+        'optionalFeatures': ['local', 'bounded', 'hand-tracking']
+      },
+      'gpuAcceleratedSort': true,
+      'sharedMemoryForWorkers': true,
+      'halfPrecisionCovariancesOnGPU': true,
+      'antialiased': true,
+      'focalAdjustment': 1.0
     });
-    
-    // Set up VR button
-    vrButton.addEventListener('click', () => {
-      viewer.enterXR();
-    });
-    
-    // Load the scene
-    let path = '/assets/data/bonsai/bonsai_high.ksplat';
+    let path = 'assets/data/bonsai/bonsai_high.ksplat';
     viewer.addSplatScene(path, {
-      'rotation': new THREE.Quaternion().setFromUnitVectors(
-        new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), 
-        new THREE.Vector3(0, 1, 0)
-      ).toArray(),
-      'scale': [0.25, 0.25, 0.25],
-      'position': [0, 0.5, 0]
+        'rotation': new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0.01933, -0.75830, -0.65161).normalize(), new THREE.Vector3(0, 1, 0)).toArray(),
+        'scale': [0.25, 0.25, 0.25],
+        'position': [0, 0.5, 0]
     })
     .then(() => {
-      infoEl.innerHTML += '<br>Scene loaded! Click "Enter VR" to begin';
-      vrButton.disabled = false;
-      viewer.start();
-    })
-    .catch(error => {
-      infoEl.innerHTML += `<br>Error loading scene: ${error.message}`;
-      console.error(error);
+        viewer.start();
     });
   </script>
 </body>
